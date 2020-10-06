@@ -11,9 +11,9 @@ from nptyping import NDArray
 from qiskit.providers.aer.backends.aerbackend import AerBackend
 
 import dsp_data
-import dc_qc_random_walks.benchmark as benchmark
-from dc_qc_random_walks.qiskit.dsp_common import apply_initial, x_measurement, y_measurement
-from dc_qc_random_walks.qiskit.dsp_independent import index_independent_prep
+import dc_qiskit_stochastics.benchmark as benchmark
+from dc_qiskit_stochastics.dsp_common import apply_initial, x_measurement, y_measurement
+from dc_qiskit_stochastics.dsp_independent import index_independent_prep
 
 logging.basicConfig(format=logging.BASIC_FORMAT, level='DEBUG')
 LOG = logging.getLogger(__name__)

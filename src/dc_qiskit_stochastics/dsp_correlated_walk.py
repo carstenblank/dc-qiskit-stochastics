@@ -9,8 +9,8 @@ from nptyping import NDArray
 from qiskit.circuit import Parameter
 from scipy import sparse
 
-from dc_qc_random_walks.benchmark import brute_force_correlated_walk, monte_carlo_correlated_walk
-from dc_qc_random_walks.qiskit.discrete_stochastic_process import DiscreteStochasticProcess
+from .benchmark import brute_force_correlated_walk, monte_carlo_correlated_walk
+from .discrete_stochastic_process import DiscreteStochasticProcess
 
 LOG = logging.getLogger(__name__)
 

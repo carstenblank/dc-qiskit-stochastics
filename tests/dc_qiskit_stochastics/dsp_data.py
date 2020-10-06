@@ -1,6 +1,6 @@
 import numpy as np
 
-from dc_qc_random_walks.qiskit.dsp_common import apply_level_two_realizations, apply_level
+from dc_qiskit_stochastics.dsp_common import apply_level_two_realizations, apply_level
 
 testing_data = [(
         1.0,

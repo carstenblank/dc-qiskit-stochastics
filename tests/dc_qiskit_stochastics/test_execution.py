@@ -5,11 +5,9 @@ from typing import List, Union
 import numpy as np
 from ddt import ddt, data as test_data, unpack
 
-from dc_qc_random_walks.qiskit.discrete_stochastic_process import DiscreteStochasticProcess
-from dc_qc_random_walks.qiskit.dsp_common import apply_level_two_realizations
-from dc_qc_random_walks.simulation_scheduling import FinishedExperiment
-from dc_qc_random_walks.simulation_scheduling.prepared_experiment import PreparedExperiment
-from dc_qc_random_walks.simulation_scheduling import RunningExperiment
+from dc_qiskit_stochastics.discrete_stochastic_process import DiscreteStochasticProcess
+from dc_qiskit_stochastics.dsp_common import apply_level_two_realizations
+from dc_quantum_scheduling import FinishedExperiment, RunningExperiment, PreparedExperiment, processor
 
 logging.basicConfig(format=logging.BASIC_FORMAT, level='DEBUG')
 LOG = logging.getLogger(__name__)
@@ -62,7 +60,7 @@ class Execution(unittest.TestCase):
 
         prepared_experiment: PreparedExperiment = dsp.characteristic_function(values, level_func=apply_func,
                                                                               other_arguments={'shots': 2**20})
-        running_simulation: RunningExperiment = prepared_experiment.execute_simulation()
+        running_simulation: RunningExperiment = processor.execute_simulation(prepared_experiment)
         finished_simulation: FinishedExperiment = running_simulation.wait()
 
         output = finished_simulation.get_output()

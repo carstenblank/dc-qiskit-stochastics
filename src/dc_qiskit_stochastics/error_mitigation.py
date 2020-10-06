@@ -10,7 +10,7 @@ from qiskit.providers.models import QasmBackendConfiguration
 from qiskit.qobj import Qobj
 from qiskit.transpiler import PassManager
 
-from ..simulation_scheduling import PreparedExperiment, FinishedExperiment
+from dc_quantum_scheduling import PreparedExperiment, FinishedExperiment
 
 from . import qobj_mapping, get_default_pass_manager
 

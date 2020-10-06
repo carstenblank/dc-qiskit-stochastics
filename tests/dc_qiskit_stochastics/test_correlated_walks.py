@@ -4,10 +4,10 @@ from typing import Tuple, List
 
 import numpy as np
 
-from dc_qc_random_walks import benchmark
-from dc_qc_random_walks.plotting import plot_characteristic_function
-from dc_qc_random_walks.qiskit.dsp_correlated_walk import CorrelatedWalk
-from dc_qc_random_walks.simulation_scheduling import processor
+from dc_qiskit_stochastics import benchmark
+from dc_qiskit_stochastics.plotting import plot_characteristic_function
+from dc_qiskit_stochastics.dsp_correlated_walk import CorrelatedWalk
+from dc_quantum_scheduling import processor
 
 logging.basicConfig(format=logging.BASIC_FORMAT, level='INFO')
 LOG = logging.getLogger(__name__)

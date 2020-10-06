@@ -17,7 +17,7 @@ from qiskit.result import Result
 from qiskit.transpiler import PassManager
 
 from . import qobj_mapping
-from ..simulation_scheduling import FinishedExperiment
+from dc_quantum_scheduling import FinishedExperiment
 
 LOG = logging.getLogger(__name__)
 

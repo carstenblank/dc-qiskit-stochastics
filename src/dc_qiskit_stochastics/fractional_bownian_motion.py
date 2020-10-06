@@ -15,9 +15,9 @@ from qiskit.transpiler import PassManager
 from scipy import sparse
 from scipy.special import gamma
 
-from dc_qc_random_walks.qiskit.dsp_correlated_walk import CorrelatedWalk, benchmark_monte_carlo
-from dc_qc_random_walks.qiskit.dsp_util import choice
-from dc_qc_random_walks.simulation_scheduling import PreparedExperiment, FinishedExperiment
+from .dsp_correlated_walk import CorrelatedWalk, benchmark_monte_carlo
+from .dsp_util import choice
+from dc_quantum_scheduling import PreparedExperiment, FinishedExperiment
 
 LOG = logging.getLogger(__name__)
 

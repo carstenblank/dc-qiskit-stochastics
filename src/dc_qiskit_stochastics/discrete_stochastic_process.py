@@ -6,19 +6,16 @@ import numpy as np
 import qiskit
 import scipy
 from qiskit.circuit import Parameter
-from qiskit.providers.aer.noise import NoiseModel
 from qiskit.providers.ibmq import IBMQBackend
-from qiskit.providers.models import BackendProperties
 from qiskit.transpiler import PassManager
 from scipy import sparse
 
-from .dsp_independent import index_independent_prep
-from ..simulation_scheduling import PreparedExperiment
-
+from dc_quantum_scheduling import PreparedExperiment
 from . import get_default_pass_manager
 from .dsp_common import apply_level, apply_initial, x_measurement, y_measurement
+from .dsp_independent import index_independent_prep
 from .dsp_util import create_qobj, extract_evaluations
-from .. import device_db
+from .qiskit import qasm_simulator
 
 LOG = logging.getLogger(__name__)
 
@@ -97,7 +94,7 @@ class DiscreteStochasticProcess(object):
                                 transpiler_target_backend: Optional[Callable[[], IBMQBackend]] = None,
                                 other_arguments: dict = None) -> PreparedExperiment:
         other_arguments = {} if other_arguments is None else other_arguments
-        backend = transpiler_target_backend() if transpiler_target_backend is not None else device_db.qasm_simulator()
+        backend = transpiler_target_backend() if transpiler_target_backend is not None else qasm_simulator()
         if external_id is None:
             tags = other_arguments.get('tags', [])
             external_id = datetime.now().strftime('%Y%m%d-%H%M%S') + f"-{type(self).__name__}-{'-'.join(tags)}"
