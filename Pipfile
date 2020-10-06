@@ -1,0 +1,30 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+uvicorn = "*"
+requests = "*"
+fbm = "*"
+fastapi = "*"
+redis = "*"
+apscheduler = "*"
+retry = "*"
+scikit-build = "*"
+qiskit = "==0.20.0"
+dc_qiskit_algorithms = "*"
+nptyping = "*"
+pylatexenc = "*"
+jupyter = "*"
+hmmlearn = "*"
+seaborn = "*"
+investpy = "*"
+
+[dev-packages]
+pytest = "*"
+matplotlib = "*"
+pandas = "*"
+
+[requires]
+python_version = "3.8"
