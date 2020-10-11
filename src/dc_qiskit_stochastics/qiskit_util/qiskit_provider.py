@@ -1,7 +1,7 @@
 import logging
 
 import qiskit
-from qiskit.providers.ibmq import AccountProvider
+from qiskit.providers import ibmq
 
 LOG = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ def set_provider_config(hub=None, group=None, project=None):
     _ibmq_config['project'] = project
 
 
-def provider() -> AccountProvider:
+def provider() -> 'ibmq.AccountProvider':
     LOG.debug(f'Requesting IBMQ provider.')
     active_account = qiskit.IBMQ.active_account()
     if active_account is None:
