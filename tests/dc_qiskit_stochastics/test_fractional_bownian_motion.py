@@ -10,7 +10,7 @@ import pytest
 from dc_qiskit_stochastics.benchmark import monte_carlo_fbm
 from dc_qiskit_stochastics.plotting import plot_characteristic_function
 from dc_qiskit_stochastics.fractional_bownian_motion import FractionalBrownianMotion
-from dc_quantum_scheduling import PreparedExperiment, processor
+from simulation_scheduling import PreparedExperiment, processor
 from fbm import FBM
 
 logging.basicConfig(format=logging.BASIC_FORMAT, level='INFO')

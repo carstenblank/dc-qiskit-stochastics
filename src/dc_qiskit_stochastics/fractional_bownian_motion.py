@@ -17,7 +17,7 @@ from scipy.special import gamma
 
 from .dsp_correlated_walk import CorrelatedWalk, benchmark_monte_carlo
 from .dsp_util import choice
-from dc_quantum_scheduling import PreparedExperiment, FinishedExperiment
+from simulation_scheduling import PreparedExperiment, FinishedExperiment
 
 LOG = logging.getLogger(__name__)
 
@@ -115,7 +115,7 @@ class FractionalBrownianMotion(object):
             ) for w in self.walks]
 
         with Pool(processes=other_arguments.get('mulitprocessing_processes', None)) as pool:
-            from dc_qc_random_walks.qiskit.discrete_stochastic_process import DiscreteStochasticProcess
+            from dc_qiskit_stochastics.discrete_stochastic_process import DiscreteStochasticProcess
             futures = []
             for w in self.walks:
                 future = pool.apply_async(
@@ -153,7 +153,7 @@ class FractionalBrownianMotion(object):
         factor = c_H / denominator
         return factor
 
-    def output(self, matrix: Union[NDArray, np.ndarray]):
+    def output_old(self, matrix: Union[NDArray, np.ndarray]):
         assert len(matrix.shape) == 2
         # Each column is one evaluation, each row is another sampled persistence
         result: List[complex] = []
@@ -165,6 +165,21 @@ class FractionalBrownianMotion(object):
                 probability_of_persistence = 1
             evaluations_per_persistence = probability_of_persistence * evaluations_per_persistence
             summed_up = np.product(evaluations_per_persistence)
+            result.append(summed_up**self.approximation_M)
+        return np.asarray(result)
+
+    def output(self, matrix: Union[NDArray, np.ndarray]):
+        assert len(matrix.shape) == 2
+        # Each column is one evaluation, each row is another sampled persistence
+        result: List[complex] = []
+        for column in range(matrix.shape[1]):
+            evaluations_per_persistence = matrix[:, column]
+            if column in self.persistence_probabilities_list:
+                probability_of_persistence = self.persistence_probabilities_list[column]
+            else:
+                probability_of_persistence = 0
+            evaluations_per_persistence = probability_of_persistence * evaluations_per_persistence
+            summed_up = np.sum(evaluations_per_persistence)
             result.append(summed_up)
         return np.asarray(result)
 
