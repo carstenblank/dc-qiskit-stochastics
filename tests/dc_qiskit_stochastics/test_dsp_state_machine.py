@@ -135,6 +135,7 @@ class StateMachineTest(unittest.TestCase):
         data = asian_option_model.get_state_machine_model()
         v = np.linspace(-0.3, 0.3, num=400)
 
+        # As this is just the lognormal distribution, we can directly brute-force compute the outcome.
         phi_v_sim = []
         for entry in v:
             summands = data.probabilities[0] * np.exp(1.0j * entry * data.realizations)
@@ -142,6 +143,7 @@ class StateMachineTest(unittest.TestCase):
             phi_v_sim.append(summed)
         phi_v_sim = np.asarray(phi_v_sim)
 
+        # The quantum approach is created here
         state_machine = StateMachineDSP(data.initial_value, data.probabilities, data.realizations)
         pre_exp: PreparedExperiment = state_machine.characteristic_function(
             evaluations=v, other_arguments={'shots': 2000, 'with_barrier': True}
@@ -151,11 +153,12 @@ class StateMachineTest(unittest.TestCase):
         fin_exp: Optional[FinishedExperiment] = run_exp.wait()
         phi_v_qc = fin_exp.get_output()
 
+        # The MC benchmark computation
         phi_v = char_func_asian_option(
-            mu,
-            sigma,
-            s0,
-            time_steps,
+            asian_option_model.mu,
+            asian_option_model.sigma,
+            asian_option_model.s0,
+            asian_option_model.time_steps,
             samples=2000,
             evaluations=v
         )
@@ -168,6 +171,7 @@ class StateMachineTest(unittest.TestCase):
         # )
         # phi_v = np.sum(phi_v_benchmark_m, axis=0, where=~np.isnan(phi_v_benchmark_m))
 
+        # Plotting party
         plt.plot(v, np.real(phi_v_sim), color='gray', alpha=0.7, label='QC-TH')
         plt.scatter(x=v, y=np.real(phi_v_qc), color='blue', alpha=1.0, label='QC', marker='.')
         plt.plot(v, np.real(phi_v), color='black', label='MC')
