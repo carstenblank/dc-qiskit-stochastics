@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import qiskit
 from qiskit.circuit import Parameter
-from scipy.stats import lognorm
 
 from dc_qiskit_stochastics.benchmark import char_func_asian_option
 from dc_qiskit_stochastics.dsp_state_machine import StateMachineDSP
+from dc_qiskit_stochastics.simulation.asian_option import AsianOptionPricing
 from dc_quantum_scheduling import processor
 from dc_quantum_scheduling.models import PreparedExperiment, RunningExperiment, FinishedExperiment
 from dsp_data import testing_data_state_machine
@@ -130,66 +130,23 @@ class StateMachineTest(unittest.TestCase):
         mu = log_normal_data['risk_free_interest']
         time_steps = log_normal_data['time_steps']
         discretization = log_normal_data['discretization']
-        n = time_steps.shape[0]
 
-        def compute_states(t: float):
-            s = sigma * np.sqrt(t)
-            mu_tilde = (mu - 0.5 * sigma ** 2) * t + np.log(s0)
-            scale = np.exp(mu_tilde)
-            q = np.linspace(0.01, 0.99, discretization)
-            xq = lognorm.ppf(q, s=s, scale=scale)
-            return xq
-
-        def compute_probability(current_state: float, target_states: np.ndarray, delta_t: float):
-            s = sigma * np.sqrt(delta_t)
-            mu_tilde = (mu - 0.5 * sigma ** 2) * delta_t + np.log(current_state)
-            scale = np.exp(mu_tilde)
-            _p = lognorm.pdf(target_states, s=s, scale=scale)
-            return _p
-
-        delta_t = time_steps[-1] / n
-
-        last_states = np.asarray([s0])
-        states = {0: last_states}
-        transition_matrices = {}
-        for level in range(1, n + 1):
-            target_states = compute_states(level * delta_t)
-
-            transition_matrix = np.zeros(shape=(last_states.shape[0], target_states.shape[0]))
-            for row, cs in enumerate(last_states):
-                density_eval = compute_probability(cs, target_states, delta_t)
-                zipped = np.vstack([target_states, np.append(target_states[1:], [target_states[-1] + 20]), density_eval])
-                probabilities = zipped[2, :] * (zipped[1, :] - zipped[0, :])
-                probabilities = probabilities / np.sum(probabilities)
-                transition_matrix[row, :] = probabilities
-
-            transition_matrices[level] = transition_matrix
-            states[level] = target_states
-            last_states = target_states
-
-        data = {
-            'initial_value': 0,  # s0,
-            'probabilities': np.asarray(list(transition_matrices.values())),
-            'realizations': np.asarray(list(states.values())[1:])
-        }
-        # print(data)
-
+        asian_option_model = AsianOptionPricing(s0, sigma, mu, time_steps, discretization)
+        data = asian_option_model.get_state_machine_model()
         v = np.linspace(-0.3, 0.3, num=400)
 
         phi_v_sim = []
         for entry in v:
-            summands = data['probabilities'][0] * np.exp(1.0j * entry * data['realizations'])
+            summands = data.probabilities[0] * np.exp(1.0j * entry * data.realizations)
             summed = np.sum(summands)
             phi_v_sim.append(summed)
         phi_v_sim = np.asarray(phi_v_sim)
 
-        state_machine = StateMachineDSP(data['initial_value'], data['probabilities'], data['realizations'])
+        state_machine = StateMachineDSP(data.initial_value, data.probabilities, data.realizations)
         pre_exp: PreparedExperiment = state_machine.characteristic_function(
             evaluations=v, other_arguments={'shots': 2000, 'with_barrier': True}
         )
         print(pre_exp.parameters['qc_cos'].draw(fold=-1))
-        # tqc = qiskit.transpile(pre_exp.parameters['qc_cos'], basis_gates=['cx', 'rx', 'ry', 'rz', 'h', 'u1'])
-        # print(tqc.draw(fold=-1))
         run_exp: RunningExperiment = processor.execute_simulation(pre_exp)
         fin_exp: Optional[FinishedExperiment] = run_exp.wait()
         phi_v_qc = fin_exp.get_output()
@@ -203,6 +160,7 @@ class StateMachineTest(unittest.TestCase):
             evaluations=v
         )
 
+        # TODO: remove if not needed
         # s = sigma * np.sqrt(delta_t)
         # mu_tilde = (mu - 0.5 * sigma ** 2) * delta_t + np.log(s0)
         # phi_v_benchmark_m = np.asarray(
