@@ -90,9 +90,9 @@ class CorrelatedWalk(DiscreteStochasticProcess):
         assert probabilities.shape == realizations.shape
         super().__init__(initial_value, probabilities, realizations)
 
-    def _proposition_one_circuit(self, scaling: Parameter, level_func=None, index_state_prep=None):
+    def _proposition_one_circuit(self, scaling: Parameter, level_func=None, index_state_prep=None, **kwargs):
         index_state_prep = index_binary_correlated_walk if index_state_prep is None else index_state_prep
-        return super(CorrelatedWalk, self)._proposition_one_circuit(scaling, level_func, index_state_prep)
+        return super(CorrelatedWalk, self)._proposition_one_circuit(scaling, level_func, index_state_prep, **kwargs)
 
     def benchmark(self, evaluations: Union[List[float], np.ndarray, scipy.sparse.dok_matrix],
                   func=None, samples: int = 100) -> Union[NDArray[complex], np.ndarray]:

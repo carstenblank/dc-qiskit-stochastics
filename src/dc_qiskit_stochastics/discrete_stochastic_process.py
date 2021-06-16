@@ -42,7 +42,7 @@ class DiscreteStochasticProcess(object):
     def _get_circuit_name_sin(scaling: float) -> str:
         return f'{DiscreteStochasticProcess._get_circuit_name(scaling)}_sine'
 
-    def _proposition_one_circuit(self, scaling: Parameter, level_func=None, index_state_prep=None):
+    def _proposition_one_circuit(self, scaling: Parameter, level_func=None, index_state_prep=None, with_barrier=False, **kwargs):
         # per default we use the standard Moettoennen level function
         level_func = apply_level if level_func is None else level_func
         # per default we use the independent index state preparation (also Moettoennen)
@@ -57,19 +57,25 @@ class DiscreteStochasticProcess(object):
         LOG.debug(f"Initializing with {self.initial_value} and scaling {scaling}.")
         init_qc = apply_initial(self.initial_value, scaling)
         qc.extend(init_qc)
+        if with_barrier:
+            qc.barrier()
 
         for level, (p, r) in enumerate(zip(self.probabilities, self.realizations)):
             LOG.debug(f"Adding level {level}: {p} with {r} and scaling {scaling}.")
             qc_index = index_state_prep(level, p)
             qc_level_l = level_func(level, r, scaling)
             qc.extend(qc_index)
+            if with_barrier:
+                qc.barrier()
             qc.extend(qc_level_l)
+            if with_barrier:
+                qc.barrier()
 
         return qc
 
-    def expval_cos_circuit(self, scaling: Parameter, level_func=None, index_state_prep=None):
+    def expval_cos_circuit(self, scaling: Parameter, level_func=None, index_state_prep=None, **kwargs):
         LOG.info(f'Cosine Circuit generation with scaling {scaling} and level_func={level_func}')
-        qc = self._proposition_one_circuit(scaling, level_func, index_state_prep)
+        qc = self._proposition_one_circuit(scaling, level_func, index_state_prep, **kwargs)
         qc.extend(x_measurement())
 
         qc.name = f'{qc.name}_cosine'
@@ -78,9 +84,9 @@ class DiscreteStochasticProcess(object):
 
         return qc
 
-    def expval_sin_circuit(self, scaling: Parameter, level_func=None, index_state_prep=None):
+    def expval_sin_circuit(self, scaling: Parameter, level_func=None, index_state_prep=None, **kwargs):
         LOG.info(f'Sine Circuit generation with scaling {scaling} and level_func={level_func}')
-        qc = self._proposition_one_circuit(scaling, level_func, index_state_prep)
+        qc = self._proposition_one_circuit(scaling, level_func, index_state_prep, **kwargs)
         qc.extend(y_measurement())
 
         qc.name = f'{qc.name}_sine'
@@ -100,8 +106,8 @@ class DiscreteStochasticProcess(object):
             external_id = datetime.now().strftime('%Y%m%d-%H%M%S') + f"-{type(self).__name__}-{'-'.join(tags)}"
 
         scaling_v: Parameter = Parameter('v')
-        qc_cos_param: qiskit.QuantumCircuit = self.expval_cos_circuit(scaling_v, level_func)
-        qc_sin_param: qiskit.QuantumCircuit = self.expval_sin_circuit(scaling_v, level_func)
+        qc_cos_param: qiskit.QuantumCircuit = self.expval_cos_circuit(scaling_v, level_func, **other_arguments)
+        qc_sin_param: qiskit.QuantumCircuit = self.expval_sin_circuit(scaling_v, level_func, **other_arguments)
 
         pre_pm = None
         if pm is None:
