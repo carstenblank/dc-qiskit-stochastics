@@ -131,6 +131,8 @@ class DiscreteStochasticProcess(object):
                 'probabilities': self.probabilities,
                 'realizations': self.realizations,
                 'pass_manager': pm.passes(),
+                'qc_cos': qc_cos_param,
+                'qc_sin': qc_sin_param,
                 **other_arguments
             },
             qobj_list=qobj_list,
