@@ -15,7 +15,7 @@ from . import get_default_pass_manager
 from .dsp_common import apply_level, apply_initial, x_measurement, y_measurement
 from .dsp_independent import index_independent_prep
 from .dsp_util import create_qobj, extract_evaluations
-from .qiskit import qasm_simulator
+from .qiskit_util import qasm_simulator
 
 LOG = logging.getLogger(__name__)
 
@@ -49,8 +49,8 @@ class DiscreteStochasticProcess(object):
         index_state_prep = index_independent_prep if index_state_prep is None else index_state_prep
 
         LOG.debug(f"Data: initial value={self.initial_value}, "
-                 f"probabilities={list(self.probabilities)}, realizations={list(self.realizations)},"
-                 f"applied function={level_func.__name__}.")
+                  f"probabilities={list(self.probabilities)}, realizations={list(self.realizations)},"
+                  f"applied function={level_func.__name__}.")
 
         qc = qiskit.QuantumCircuit()
 
