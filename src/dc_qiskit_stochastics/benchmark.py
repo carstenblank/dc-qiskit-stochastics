@@ -253,3 +253,26 @@ def monte_carlo_fbm(hurst: float, evaluations: np.ndarray, time_evaluation: floa
             monte_carlo_eval = np.average(expected_value)
             monte_carlo.append(monte_carlo_eval)
         return monte_carlo
+
+
+def _asian_option_price(risk_free_interest, volatility, start_value, time_steps: np.ndarray):
+    from dc_qiskit_stochastics.simulation.lognormal import sample_path
+    path = sample_path(risk_free_interest, volatility, start_value, time_steps)
+    value = np.average(path)
+    return value
+
+
+def char_func_asian_option(risk_free_interest, volatility, start_value, time_steps: np.ndarray, samples: int, evaluations: np.ndarray):
+    arguments = [risk_free_interest, volatility, start_value, time_steps]
+    samples_arguments = [arguments] * samples
+
+    char_func_est_list = []
+    with Pool() as pool:
+        for v in evaluations:
+            values = pool.starmap(_asian_option_price, samples_arguments)
+            char_func_vec = np.exp(1.0j * v * np.asarray(values))
+            # char_func_vec = np.cos(v * np.asarray(values))
+            char_func_est = np.average(char_func_vec)
+            char_func_est_list.append(char_func_est)
+
+    return np.asarray(char_func_est_list)
