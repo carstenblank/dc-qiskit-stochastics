@@ -29,7 +29,6 @@ def sample_step(risk_free_interest, volatility, t_1, t_2, z):
     :param z: a realization of a standard normal random variable
     :return: returns the value of the asset.
     """
-    assert t_1 < t_2
     mu = (risk_free_interest - 0.5 * volatility**2) * (t_2 - t_1)
     sigma = volatility * np.sqrt(t_2 - t_1)
 
@@ -38,7 +37,7 @@ def sample_step(risk_free_interest, volatility, t_1, t_2, z):
     return np.exp(log_r)
 
 
-def sample_path(risk_free_interest, volatility, start_value, time: Tuple[float, float], n: int):
+def sample_path(risk_free_interest, volatility, start_value, time_steps: np.ndarray):
     """
     Calculate a sample path of length `n` given parameters.
 
@@ -49,9 +48,11 @@ def sample_path(risk_free_interest, volatility, start_value, time: Tuple[float, 
     :param n: number of intermediate steps
     :return: a path of n realizations of increments.
     """
-    time_steps = np.linspace(time[0], time[1], num=n + 1)
-
+    n = time_steps.shape[0]
     Z = list(np.random.standard_normal(n))
+
+    # Add the first evaluation point, which is the starting value
+    time_steps = [0.0] + time_steps.tolist()
 
     path_elements = [start_value]
     for [t_1, t_2] in zip(time_steps, time_steps[1:]):
@@ -59,8 +60,9 @@ def sample_path(risk_free_interest, volatility, start_value, time: Tuple[float, 
         s = sample_step(risk_free_interest, volatility, t_1, t_2, z)
         path_elements.append(s)
 
+    # Skip the first value that we added above!
     path = []
-    for i in range(0, len(path_elements)):
+    for i in range(1, len(path_elements)):
         s = np.prod(path_elements[0:i + 1])
         path.append(s)
 
