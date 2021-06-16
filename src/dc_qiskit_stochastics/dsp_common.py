@@ -31,7 +31,6 @@ def apply_initial(value: float, scaling_factor: Parameter) -> qiskit.QuantumCirc
 
 
 def apply_level(level: int, realizations: np.array, scaling_factor: Parameter) -> qiskit.QuantumCircuit:
-    # FIXME: Tests dont pass!
     k, = realizations.shape
     qubits_k = int(np.ceil(np.log2(k)))
     qc = qiskit.QuantumCircuit(name=f'level_{level}')
@@ -41,7 +40,15 @@ def apply_level(level: int, realizations: np.array, scaling_factor: Parameter) -
     qc.add_register(qreg_data)
     alpha = sparse.dok_matrix([realizations]).transpose()
     LOG.debug(f"Will add a uniform rotation gate with u1({scaling_factor} * {realizations})")
-    qc.append(UniformRotationGate(lambda theta: U1Gate(scaling_factor * theta), alpha), [qreg_index, qreg_data])
+    qc.append(UniformRotationGate(lambda theta: U1Gate(scaling_factor * theta), alpha), list(qreg_index) + list(qreg_data))
+
+    # TODO: make this configurabel
+    # for (i, j), angle in alpha.items():
+    #     qc.append(
+    #         U1Gate(1.0 * scaling_factor * angle).control(num_ctrl_qubits=qubits_k, ctrl_state=int(i)),
+    #         list(qreg_index) + list(qreg_data)
+    #     )
+
     return qc
 
 
