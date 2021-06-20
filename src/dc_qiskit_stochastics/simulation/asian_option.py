@@ -9,7 +9,11 @@ LOG = logging.getLogger(__name__)
 
 class StateMachineDescription:
 
-    def __init__(self, initial_value, probabilities, realizations):
+    realizations: np.ndarray
+    probabilities: np.ndarray
+    initial_value: float
+
+    def __init__(self, initial_value: float, probabilities: np.ndarray, realizations: np.ndarray):
         self.initial_value = initial_value
         self.probabilities = probabilities
         self.realizations = realizations
