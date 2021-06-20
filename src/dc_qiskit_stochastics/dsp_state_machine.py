@@ -79,6 +79,11 @@ def _index_prep(level: int, probabilities: np.ndarray) -> qiskit.QuantumCircuit:
     gate = ControlledStatePreparationGate(matrix)
     qc.append(gate, list(qreg_last) + list(qreg_current), [])
 
+    # TODO: make this configurable.
+    # from qiskit import QuantumCircuit
+    # qc_bla: QuantumCircuit = gate.definition
+    # qc = qc.compose(qc_bla, qubits=list(qreg_last) + list(qreg_current))
+
     return qc
 
 
