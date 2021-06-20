@@ -74,8 +74,8 @@ def _index_prep(level: int, probabilities: np.ndarray) -> qiskit.QuantumCircuit:
     qc.add_register(qreg_current)
 
     # Möttönen State-prep with row
-    # amplitudes = np.sqrt(probabilities)
-    matrix = sparse.dok_matrix(probabilities)
+    amplitudes = probabilities ** 0.5
+    matrix = sparse.dok_matrix(amplitudes)
     gate = ControlledStatePreparationGate(matrix)
     qc.append(gate, list(qreg_last) + list(qreg_current), [])
 
