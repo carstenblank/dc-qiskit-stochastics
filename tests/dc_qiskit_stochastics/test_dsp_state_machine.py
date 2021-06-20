@@ -200,7 +200,7 @@ class StateMachineTest(unittest.TestCase):
             'volatility': 0.05,
             'start_value': 80,
             'time_steps': np.asarray([5, 10]),
-            'discretization': 2**5
+            'discretization': 2**3
         }
 
         s0 = log_normal_data['start_value']
