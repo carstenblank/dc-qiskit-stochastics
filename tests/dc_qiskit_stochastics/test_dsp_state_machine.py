@@ -7,9 +7,9 @@ import numpy as np
 import qiskit
 from qiskit.circuit import Parameter
 
-from dc_qiskit_stochastics.benchmark import char_func_asian_option
+from dc_qiskit_stochastics.benchmark import char_func_asian_option, char_func_asian_option_sm
 from dc_qiskit_stochastics.dsp_state_machine import StateMachineDSP
-from dc_qiskit_stochastics.simulation.asian_option import AsianOptionPricing
+from dc_qiskit_stochastics.simulation.asian_option import AsianOptionPricing, StateMachineDescription
 from dc_quantum_scheduling import processor
 from dc_quantum_scheduling.models import PreparedExperiment, RunningExperiment, FinishedExperiment
 from dsp_data import testing_data_state_machine
@@ -186,6 +186,67 @@ class StateMachineTest(unittest.TestCase):
         plt.scatter(x=v, y=np.imag(phi_v_qc), color='blue', alpha=0.7, label='QC', marker='.')
         plt.plot(v, np.imag(phi_v), color='black', label='MC')
 
+        plt.axvline(x=0, color='purple')
+        plt.title(f'Imaginary part (sine) at {time_steps}')
+        plt.ylim((-1.1, 1.1))
+        plt.legend()
+        plt.show()
+
+    def test_asian_option(self):
+        log_normal_data = {
+            'risk_free_interest': 0.02,
+            'volatility': 0.05,
+            'start_value': 80,
+            'time_steps': np.asarray([5, 10]),
+            'discretization': 2**5
+        }
+
+        s0 = log_normal_data['start_value']
+        sigma = log_normal_data['volatility']
+        mu = log_normal_data['risk_free_interest']
+        time_steps = log_normal_data['time_steps']
+        discretization = log_normal_data['discretization']
+
+        asian_option_model = AsianOptionPricing(s0, sigma, mu, time_steps, discretization)
+        data: StateMachineDescription = asian_option_model.get_state_machine_model()
+        v = np.linspace(-0.3, 0.3, num=400)
+
+        # The brute force calculation using the state machine description
+        phi_v_sim = char_func_asian_option_sm(v, asian_option_model)
+
+        # The quantum approach is created here
+        state_machine = StateMachineDSP(data.initial_value, data.probabilities, data.realizations)
+        pre_exp: PreparedExperiment = state_machine.characteristic_function(
+            evaluations=v, other_arguments={'shots': 2000, 'with_barrier': True}
+        )
+        print(qiskit.transpile(pre_exp.parameters['qc_cos']).draw(fold=-1))
+        run_exp: RunningExperiment = processor.execute_simulation(pre_exp)
+        fin_exp: Optional[FinishedExperiment] = run_exp.wait()
+        phi_v_qc = fin_exp.get_output()
+
+        # The MC benchmark computation
+        phi_v = char_func_asian_option(
+            asian_option_model.mu,
+            asian_option_model.sigma,
+            asian_option_model.s0,
+            asian_option_model.time_steps,
+            samples=2000,
+            evaluations=v
+        )
+
+        # Plotting party
+        plt.plot(v, np.real(phi_v_sim), color='gray', alpha=0.7, label='QC-TH')
+        plt.scatter(x=v, y=np.real(phi_v_qc), color='blue', alpha=1.0, label='QC', marker='.')
+        plt.plot(v, np.real(phi_v), color='black', label='MC')
+        plt.axvline(x=0, color='purple')
+        plt.title(f'Real part (cosine) at {time_steps}')
+        plt.ylim((-1.1, 1.1))
+        plt.legend()
+        plt.show()
+
+        plt.plot(v, np.imag(phi_v_sim), color='gray', alpha=0.7, label='QC-TH')
+        plt.scatter(x=v, y=np.imag(phi_v_qc), color='blue', alpha=0.7, label='QC', marker='.')
+        plt.plot(v, np.imag(phi_v), color='black', label='MC')
         plt.axvline(x=0, color='purple')
         plt.title(f'Imaginary part (sine) at {time_steps}')
         plt.ylim((-1.1, 1.1))
