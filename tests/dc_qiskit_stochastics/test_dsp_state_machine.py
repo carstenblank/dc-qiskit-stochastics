@@ -135,13 +135,15 @@ class StateMachineTest(unittest.TestCase):
         data = asian_option_model.get_state_machine_model()
         v = np.linspace(-0.3, 0.3, num=400)
 
-        # As this is just the lognormal distribution, we can directly brute-force compute the outcome.
-        phi_v_sim = []
-        for entry in v:
-            summands = data.probabilities[0] * np.exp(1.0j * entry * data.realizations)
-            summed = np.sum(summands)
-            phi_v_sim.append(summed)
-        phi_v_sim = np.asarray(phi_v_sim)
+        # TODO: test the benchmark separately with this:
+        # # As this is just the lognormal distribution, we can directly brute-force compute the outcome.
+        # phi_v_sim = []
+        # for entry in v:
+        #     summands = data.probabilities[0] * np.exp(1.0j * entry * data.realizations)
+        #     summed = np.sum(summands)
+        #     phi_v_sim.append(summed)
+        # phi_v_sim = np.asarray(phi_v_sim)
+        phi_v_sim = char_func_asian_option_sm(v, asian_option_model)
 
         # The quantum approach is created here
         state_machine = StateMachineDSP(data.initial_value, data.probabilities, data.realizations)
