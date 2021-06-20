@@ -7,6 +7,8 @@ import numpy as np
 from fbm import FBM
 from nptyping import NDArray
 
+from dc_qiskit_stochastics.simulation.asian_option import AsianOptionPricing, StateMachineDescription
+
 LOG = logging.getLogger(__name__)
 
 
@@ -276,3 +278,33 @@ def char_func_asian_option(risk_free_interest, volatility, start_value, time_ste
             char_func_est_list.append(char_func_est)
 
     return np.asarray(char_func_est_list)
+
+
+def char_func_asian_option_sm(evaluations: np.ndarray, asian_option_model: AsianOptionPricing):
+    data: StateMachineDescription = asian_option_model.get_state_machine_model()
+
+    evals = []
+    probs = []
+    possibilities = len(asian_option_model.time_steps) * [list(range(asian_option_model.discretization))]
+    for path in itertools.product(*possibilities):
+        prob = 1
+        val = 0
+        for l in range(len(path)):
+            c = 0 if l == 0 else path[l - 1]
+            p = data.probabilities[l][c, path[l]]
+            vl = data.realizations[l][path[l]]
+            prob *= p
+            val += vl
+        evals.append(val)
+        probs.append(prob)
+    probs = np.asarray(probs)
+    evals = np.asarray(evals)
+
+    phi_v_sim = []
+    for entry in evaluations:
+        summands = probs * np.exp(1.0j * entry * evals)
+        summed = np.sum(summands)
+        phi_v_sim.append(summed)
+    phi_v_sim = np.asarray(phi_v_sim)
+
+    return phi_v_sim
