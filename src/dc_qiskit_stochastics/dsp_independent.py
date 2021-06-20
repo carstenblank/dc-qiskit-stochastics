@@ -10,7 +10,7 @@ from scipy import sparse
 LOG = logging.getLogger(__name__)
 
 
-def index_independent_prep(level: int, probabilities: NDArray) -> qiskit.QuantumCircuit:
+def index_independent_prep(level: int, probabilities: NDArray, **kwargs) -> qiskit.QuantumCircuit:
     """
     The function adds an index register of appropriate size and uses the state preparation by Möttönen et al.
     > Möttönen, Mikko, et al. "Transformation of quantum states using uniformly controlled rotations."
@@ -33,7 +33,7 @@ def index_independent_prep(level: int, probabilities: NDArray) -> qiskit.Quantum
     return qc
 
 
-def index_independent_prep_two(level: int, probabilities: np.ndarray) -> qiskit.QuantumCircuit:
+def index_independent_prep_two(level: int, probabilities: np.ndarray, **kwargs) -> qiskit.QuantumCircuit:
     assert probabilities.shape == (2,)
 
     qc = qiskit.QuantumCircuit(name='index_state_prep')

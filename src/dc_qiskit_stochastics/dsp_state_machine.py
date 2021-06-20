@@ -15,7 +15,7 @@ from .dsp_common import apply_level
 LOG = logging.getLogger(__name__)
 
 
-def _index_prep_level_0(probabilities: np.ndarray) -> qiskit.QuantumCircuit:
+def _index_prep_level_0(probabilities: np.ndarray, **kwargs) -> qiskit.QuantumCircuit:
     """
     The function adds an index register of appropriate size and uses the state preparation by Möttönen et al.
     > Möttönen, Mikko, et al. "Transformation of quantum states using uniformly controlled rotations."
@@ -46,7 +46,7 @@ def _index_prep_level_0(probabilities: np.ndarray) -> qiskit.QuantumCircuit:
     return qc
 
 
-def _index_prep(level: int, probabilities: np.ndarray) -> qiskit.QuantumCircuit:
+def _index_prep(level: int, probabilities: np.ndarray, with_debug_circuit: bool = False, **kwargs) -> qiskit.QuantumCircuit:
     """
     The function adds an index register of appropriate size and uses the state preparation by Möttönen et al.
     > Möttönen, Mikko, et al. "Transformation of quantum states using uniformly controlled rotations."
@@ -77,30 +77,31 @@ def _index_prep(level: int, probabilities: np.ndarray) -> qiskit.QuantumCircuit:
     amplitudes = probabilities ** 0.5
     matrix = sparse.dok_matrix(amplitudes)
     gate = ControlledStatePreparationGate(matrix)
-    qc.append(gate, list(qreg_last) + list(qreg_current), [])
 
-    # TODO: make this configurable.
-    # from qiskit import QuantumCircuit
-    # qc_bla: QuantumCircuit = gate.definition
-    # qc = qc.compose(qc_bla, qubits=list(qreg_last) + list(qreg_current))
+    if with_debug_circuit:
+        from qiskit import QuantumCircuit
+        qc_def: QuantumCircuit = gate.definition
+        qc = qc.compose(qc_def, qubits=list(qreg_last) + list(qreg_current))
+    else:
+        qc.append(gate, list(qreg_last) + list(qreg_current), [])
 
     return qc
 
 
-def _index(level, probabilities):
+def _index(level, probabilities, **kwargs):
     # Deliver the index register which encodes the joint probability of realizations
     # Given the initial value, select the row that is encoding the first step
     level_probabilities = np.asarray(probabilities)
     if level == 0:
-        return _index_prep_level_0(level_probabilities)
+        return _index_prep_level_0(level_probabilities, **kwargs)
     else:
-        return _index_prep(level, level_probabilities)
+        return _index_prep(level, level_probabilities, **kwargs)
 
 
-def _level(level, realizations, scaling):
+def _level(level, realizations, scaling, **kwargs):
     # Deliver the index register which encodes the joint probability of realizations
     # Given the initial value, select the row that is encoding the first step
-    return apply_level(level, realizations, scaling)
+    return apply_level(level, realizations, scaling, **kwargs)
 
 
 class StateMachineDSP(DiscreteStochasticProcess):

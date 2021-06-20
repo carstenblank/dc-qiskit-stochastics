@@ -62,8 +62,8 @@ class DiscreteStochasticProcess(object):
 
         for level, (p, r) in enumerate(zip(self.probabilities, self.realizations)):
             LOG.debug(f"Adding level {level}: {p} with {r} and scaling {scaling}.")
-            qc_index = index_state_prep(level, p)
-            qc_level_l = level_func(level, r, scaling)
+            qc_index = index_state_prep(level, p, **kwargs)
+            qc_level_l = level_func(level, r, scaling, **kwargs)
             qc.extend(qc_index)
             if with_barrier:
                 qc.barrier()
