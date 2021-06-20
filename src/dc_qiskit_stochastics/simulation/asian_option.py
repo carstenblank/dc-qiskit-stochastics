@@ -72,5 +72,5 @@ class AsianOptionPricing:
         return StateMachineDescription(
             initial_value=0,
             probabilities=np.asarray(list(transition_matrices.values())),
-            realizations=np.asarray(list(states.values())[1:])
+            realizations=np.asarray(list(states.values())[1:])/self.n
         )
