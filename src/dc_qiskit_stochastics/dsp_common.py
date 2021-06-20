@@ -42,7 +42,7 @@ def apply_level(level: int, realizations: np.array, scaling_factor: Parameter) -
     LOG.debug(f"Will add a uniform rotation gate with u1({scaling_factor} * {realizations})")
     qc.append(UniformRotationGate(lambda theta: U1Gate(scaling_factor * theta), alpha), list(qreg_index) + list(qreg_data))
 
-    # TODO: make this configurabel
+    # TODO: make this configurable
     # for (i, j), angle in alpha.items():
     #     qc.append(
     #         U1Gate(1.0 * scaling_factor * angle).control(num_ctrl_qubits=qubits_k, ctrl_state=int(i)),
