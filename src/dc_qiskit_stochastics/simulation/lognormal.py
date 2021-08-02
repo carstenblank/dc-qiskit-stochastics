@@ -44,8 +44,7 @@ def sample_path(risk_free_interest, volatility, start_value, time_steps: np.ndar
     :param risk_free_interest: the risk-free interest rate
     :param volatility: volatility of the asset, always greater zero!
     :param start_value: start value of the asset
-    :param time: the simulation time in total
-    :param n: number of intermediate steps
+    :param time_steps: the simulation times to evaluate
     :return: a path of n realizations of increments.
     """
     n = time_steps.shape[0]
