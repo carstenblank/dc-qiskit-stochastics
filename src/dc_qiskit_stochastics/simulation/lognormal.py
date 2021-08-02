@@ -77,9 +77,10 @@ def sample_last(risk_free_interest, volatility, start_value, time: Tuple[float, 
     :param start_value: start value of the asset
     :param time: duration of the simulation
     :param n: number of steps in between
-    :return: returns the value at `time` of the assset given one simulation!
+    :return: returns the value at `time` of the asset given one simulation!
     """
-    path = sample_path(risk_free_interest, volatility, start_value, time, n)
+    time_steps = np.linspace(time[0], time[1], n + 1)[1:]
+    path = sample_path(risk_free_interest, volatility, start_value, time_steps)
     return path[-1]
 
 
