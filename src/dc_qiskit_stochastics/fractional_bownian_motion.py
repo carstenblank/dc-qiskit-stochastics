@@ -17,7 +17,7 @@ from scipy.special import gamma
 
 from .dsp_correlated_walk import CorrelatedWalk, benchmark_monte_carlo
 from .dsp_util import choice
-from simulation_scheduling import PreparedExperiment, FinishedExperiment
+from dc_quantum_scheduling import PreparedExperiment, FinishedExperiment
 
 LOG = logging.getLogger(__name__)
 

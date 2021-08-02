@@ -15,7 +15,7 @@ from .discrete_stochastic_process import DiscreteStochasticProcess
 LOG = logging.getLogger(__name__)
 
 
-def index_binary_correlated_walk(level: int, level_p: np.ndarray) -> qiskit.QuantumCircuit:
+def index_binary_correlated_walk(level: int, level_p: np.ndarray, **kwargs) -> qiskit.QuantumCircuit:
     probs = []
     probs.append([np.sqrt(level_p[0]), np.sqrt(1 - level_p[0])])
     probs.append([np.sqrt(1 - level_p[1]), np.sqrt(level_p[1])])
