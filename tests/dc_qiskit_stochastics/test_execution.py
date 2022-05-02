@@ -3,6 +3,7 @@ import unittest
 from typing import List, Union
 
 import numpy as np
+import qiskit
 from ddt import ddt, data as test_data, unpack
 
 from dc_qiskit_stochastics.discrete_stochastic_process import DiscreteStochasticProcess
@@ -38,13 +39,47 @@ def characteristic_function_two_step(initial_value: float, probabilities: np.nda
 @ddt
 class Execution(unittest.TestCase):
 
+    # @test_data(
+    #     ([0.1, 0.2, 0.3], 0.0, np.asarray(4*[[.5, .5]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
+    #     ([0.1, 0.2, 0.3], 5.0, np.asarray(4*[[.5, .5]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
+    #     ([0.1, 0.2, 0.3], -5.0, np.asarray(4*[[.5, .5]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
+    #     ([0.1, 0.2, 0.3], -5.0, np.asarray(4*[[.5, .5]]), np.asarray([[-1, 1], [-0.5, 1], [-0.1, 0.3], [0.0, 2.5]]), apply_level_two_realizations),
+    #     ([0.1, 0.2, 0.3], -5.0, np.asarray([[.5, .5], [.1, .9], [.3, .7], [.8, .2]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
+    #     ([0.1, 0.2, 0.3], -5.0, np.asarray([[.5, .5], [.1, .9], [.3, .7], [.8, .2]]), np.asarray([[-1, 1], [-0.5, 1], [-0.1, 0.3], [0.0, 2.5]]), apply_level_two_realizations),
+    # )
+    # @unpack
+    # def test_calculate_y_measurement_sin(self, values: List[float], initial_value: float, probabilities: np.ndarray,
+    #                                      realizations: np.ndarray, apply_func):
+    #
+    #     # output_expected = np.asarray([np.cos(s) ** 4 for s in values])
+    #     func = characteristic_function_two_step(initial_value, probabilities, realizations)
+    #     output_expected = func(values)
+    #     LOG.info(f'Result Expected: {output_expected}')
+    #
+    #     dsp: DiscreteStochasticProcess = DiscreteStochasticProcess(initial_value=initial_value, probabilities=probabilities,
+    #                                     realizations=realizations)
+    #
+    #     prepared_experiment: PreparedExperiment = dsp.characteristic_function(values, level_func=apply_func,
+    #                                                                           other_arguments={'shots': 2**20})
+    #     running_simulation: RunningExperiment = processor.execute_simulation(prepared_experiment)
+    #     finished_simulation: FinishedExperiment = running_simulation.wait()
+    #
+    #     output = finished_simulation.get_output()
+    #
+    #     LOG.info(f'Starting Assertions on output: {output}')
+    #     comparison = list(zip(output, output_expected))
+    #     for actual, expected in comparison:
+    #         LOG.info(f'Comparing: {actual} vs. {expected}')
+    #         self.assertAlmostEqual(actual.real, expected.real, delta=10e-3)
+    #         self.assertAlmostEqual(actual.imag, expected.imag, delta=10e-3)
+
     @test_data(
         ([0.1, 0.2, 0.3], 0.0, np.asarray(4*[[.5, .5]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
-        ([0.1, 0.2, 0.3], 5.0, np.asarray(4*[[.5, .5]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
-        ([0.1, 0.2, 0.3], -5.0, np.asarray(4*[[.5, .5]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
-        ([0.1, 0.2, 0.3], -5.0, np.asarray(4*[[.5, .5]]), np.asarray([[-1, 1], [-0.5, 1], [-0.1, 0.3], [0.0, 2.5]]), apply_level_two_realizations),
-        ([0.1, 0.2, 0.3], -5.0, np.asarray([[.5, .5], [.1, .9], [.3, .7], [.8, .2]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
-        ([0.1, 0.2, 0.3], -5.0, np.asarray([[.5, .5], [.1, .9], [.3, .7], [.8, .2]]), np.asarray([[-1, 1], [-0.5, 1], [-0.1, 0.3], [0.0, 2.5]]), apply_level_two_realizations),
+        # ([0.1, 0.2, 0.3], 5.0, np.asarray(4*[[.5, .5]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
+        # ([0.1, 0.2, 0.3], -5.0, np.asarray(4*[[.5, .5]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
+        # ([0.1, 0.2, 0.3], -5.0, np.asarray(4*[[.5, .5]]), np.asarray([[-1, 1], [-0.5, 1], [-0.1, 0.3], [0.0, 2.5]]), apply_level_two_realizations),
+        # ([0.1, 0.2, 0.3], -5.0, np.asarray([[.5, .5], [.1, .9], [.3, .7], [.8, .2]]), np.asarray(4*[[-1, 1]]), apply_level_two_realizations),
+        # ([0.1, 0.2, 0.3], -5.0, np.asarray([[.5, .5], [.1, .9], [.3, .7], [.8, .2]]), np.asarray([[-1, 1], [-0.5, 1], [-0.1, 0.3], [0.0, 2.5]]), apply_level_two_realizations),
     )
     @unpack
     def test_calculate_y_measurement_sin(self, values: List[float], initial_value: float, probabilities: np.ndarray,
@@ -58,8 +93,9 @@ class Execution(unittest.TestCase):
         dsp: DiscreteStochasticProcess = DiscreteStochasticProcess(initial_value=initial_value, probabilities=probabilities,
                                         realizations=realizations)
 
-        prepared_experiment: PreparedExperiment = dsp.characteristic_function(values, level_func=apply_func,
-                                                                              other_arguments={'shots': 2**20})
+        prepared_experiment: PreparedExperiment = dsp.characteristic_function(
+            values, level_func=apply_func, use_ae=True, other_arguments={'shots': 2**12}
+        )
         running_simulation: RunningExperiment = processor.execute_simulation(prepared_experiment)
         finished_simulation: FinishedExperiment = running_simulation.wait()
 
