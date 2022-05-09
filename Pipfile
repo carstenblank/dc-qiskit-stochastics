@@ -4,29 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-uvicorn = "*"
-requests = "*"
 fbm = "*"
-fastapi = "*"
-redis = "*"
-apscheduler = "*"
 retry = "*"
-scikit-build = "*"
-qiskit = "==0.20.0"
 dc_qiskit_algorithms = "*"
-bitarray = "==1.6.0"
-nptyping = "*"
-pylatexenc = "*"
-jupyter = "*"
 hmmlearn = "*"
-seaborn = "*"
-investpy = "*"
-z3-solver = "*"
 
 [dev-packages]
 pytest = "*"
 matplotlib = "*"
 pandas = "*"
+jupyter = "*"
 
 [requires]
 python_version = "3.8"

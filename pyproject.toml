@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "dc-qiskit-stochastics"
+version = "0.0.1"
+description = ""
+authors = ["Carsten BLank <blank@data-cybernetics.com>"]
+# New attributes
+license = "Apache Software License"
+readme = "README.md"
+homepage = "https://github.com/carstenblank/dc-quantum-scheduling"
+repository = "https://github.com/carstenblank/dc-quantum-scheduling"
+keywords = ["quantum", "physics"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python",
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3 :: Only',
+    "Topic :: Scientific/Engineering :: Physics"
+]
+include = [
+    "LICENSE",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.7,<4"
+fbm = "*"
+retry = "*"
+dc-qiskit-algorithms = "*"
+dc-quantum-scheduling = "*"
+hmmlearn = "*"
+
+[tool.poetry.dev-dependencies]
