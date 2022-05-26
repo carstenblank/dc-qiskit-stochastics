@@ -4,12 +4,11 @@ from typing import List, Optional
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from nptyping import NDArray
 
 
-def plot_characteristic_function(simulation:  [List[complex] or np.ndarray or NDArray],
-                                 experiment: [List[complex] or np.ndarray or NDArray],
-                                 theory: [List[complex] or np.ndarray or NDArray],
+def plot_characteristic_function(simulation:  [List[complex] or np.ndarray],
+                                 experiment: [List[complex] or np.ndarray],
+                                 theory: [List[complex] or np.ndarray],
                                  title: Optional[str] = None) -> Figure:
 
     fig: Figure = plt.figure()

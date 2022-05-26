@@ -5,7 +5,6 @@ from typing import List, Union, Optional, Tuple
 
 import numpy as np
 from fbm import FBM
-from nptyping import NDArray
 
 from dc_qiskit_stochastics.simulation.asian_option import AsianOptionPricing, StateMachineDescription
 
@@ -59,7 +58,7 @@ def characteristic_function_rw_ind(initial_value: float, probabilities: np.array
     return outcomes
 
 
-def brute_force_rw_ind(probabilities: [NDArray or np.ndarray], realizations: [NDArray or np.ndarray],
+def brute_force_rw_ind(probabilities: np.ndarray, realizations: np.ndarray,
                        initial_value: float, scaling: float, func=None, **kwargs) -> Optional[float]:
     func = func if func is not None else lambda x: np.exp(1.0j * x)
     levels, k = probabilities.shape
@@ -112,7 +111,7 @@ def monte_carlo_rw_ind(mc_samples, choices, probs, length, scalings: np.ndarray,
     return None
 
 
-def brute_force_correlated_walk(probabilities: [NDArray or np.ndarray], realizations: [NDArray or np.ndarray],
+def brute_force_correlated_walk(probabilities: np.ndarray, realizations: np.ndarray,
                                 initial_value: float, scaling: float = 1.0, func=None, return_hist=False,
                                 **kwargs) -> Optional[float or Tuple[float, np.ndarray, np.ndarray]]:
 
@@ -170,7 +169,7 @@ def brute_force_correlated_walk(probabilities: [NDArray or np.ndarray], realizat
         return None
 
 
-def _monte_carlo_correlated_walk_path(probabilities: [NDArray or np.ndarray], realizations: [NDArray or np.ndarray]):
+def _monte_carlo_correlated_walk_path(probabilities: np.ndarray, realizations: np.ndarray):
     path = []
     steps = []
     for i, (p, r) in enumerate(zip(probabilities, realizations)):
