@@ -55,9 +55,9 @@ class LogNormalTests(unittest.TestCase):
 
         m = np.min(possible_values - end_value_interest)
         print(f'The minimum distance from the correct answer of those iteration was found to be: {m}.')
-        self.assertAlmostEqual(m, 0, delta=1e-1, msg='The distance of the sampled value to the theoretical result is '
-                                                     'not met. As this is a randomized algorithm, it may be valid '
-                                                     'still. Rerun the test please.')
+        self.assertAlmostEqual(m, 0, delta=1, msg='The distance of the sampled value to the theoretical result is '
+                                                  'not met. As this is a randomized algorithm, it may be valid '
+                                                  'still. Rerun the test please.')
 
 
 @ddt
