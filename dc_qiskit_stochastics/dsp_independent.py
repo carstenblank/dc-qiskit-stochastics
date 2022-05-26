@@ -4,13 +4,12 @@ import numpy as np
 import qiskit
 from dc_qiskit_algorithms import MöttönenStatePreparationGate
 from dc_qiskit_algorithms.MöttönenStatePreparation import get_alpha_y
-from nptyping import NDArray
 from scipy import sparse
 
 LOG = logging.getLogger(__name__)
 
 
-def index_independent_prep(level: int, probabilities: NDArray, **kwargs) -> qiskit.QuantumCircuit:
+def index_independent_prep(level: int, probabilities: np.ndarray, **kwargs) -> qiskit.QuantumCircuit:
     """
     The function adds an index register of appropriate size and uses the state preparation by Möttönen et al.
     > Möttönen, Mikko, et al. "Transformation of quantum states using uniformly controlled rotations."

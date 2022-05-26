@@ -7,7 +7,6 @@ import numpy as np
 import qiskit
 import qiskit.result
 from ddt import ddt, data as test_data, unpack
-from nptyping import NDArray
 from qiskit.providers.aer.backends.aerbackend import AerBackend
 
 import dsp_data
@@ -117,8 +116,8 @@ class QiskitDspCircuitTests(unittest.TestCase):
 
     @test_data(*dsp_data.testing_data)
     @unpack
-    def test_create_circuit(self, scaling: float, initial_value: float, probabilities: NDArray,
-                            realizations: NDArray, apply_func):
+    def test_create_circuit(self, scaling: float, initial_value: float, probabilities: np.ndarray,
+                            realizations: np.ndarray, apply_func):
         LOG.info(f"Data: scaling={scaling}, initial value={initial_value}, "
                  f"probabilities={list(probabilities)}, realizations={list(realizations)},"
                  f"applied function={apply_func.__name__}.")
@@ -150,8 +149,8 @@ class QiskitDspCircuitTests(unittest.TestCase):
 
     @test_data(*dsp_data.testing_data)
     @unpack
-    def test_calculate_x_measurement_cos(self, scaling: float, initial_value: float, probabilities: NDArray,
-                                         realizations: NDArray, apply_func):
+    def test_calculate_x_measurement_cos(self, scaling: float, initial_value: float, probabilities: np.ndarray,
+                                         realizations: np.ndarray, apply_func):
         LOG.info(f"Data: scaling={scaling}, initial value={initial_value}, "
                  f"probabilities={list(probabilities)}, realizations={list(realizations)},"
                  f"applied function={apply_func.__name__}.")
