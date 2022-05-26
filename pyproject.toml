@@ -6,8 +6,8 @@ authors = ["Carsten BLank <blank@data-cybernetics.com>"]
 # New attributes
 license = "Apache Software License"
 readme = "README.md"
-homepage = "https://github.com/carstenblank/dc-quantum-scheduling"
-repository = "https://github.com/carstenblank/dc-quantum-scheduling"
+homepage = "https://github.com/carstenblank/dc-qiskit-stochastics"
+repository = "https://github.com/carstenblank/dc-qiskit-stochastics"
 keywords = ["quantum", "physics"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -40,3 +40,6 @@ dc-quantum-scheduling = "*"
 hmmlearn = "*"
 
 [tool.poetry.dev-dependencies]
+pytest = "*"
+matplotlib = "*"
+pandas = "*"
