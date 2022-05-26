@@ -5,7 +5,6 @@ import numpy as np
 import qiskit
 import scipy
 from dc_qiskit_algorithms.MöttönenStatePreparation import get_alpha_y
-from nptyping import NDArray
 from qiskit.circuit import Parameter
 from scipy import sparse
 
@@ -15,7 +14,7 @@ from .discrete_stochastic_process import DiscreteStochasticProcess
 LOG = logging.getLogger(__name__)
 
 
-def index_binary_correlated_walk(level: int, level_p: np.ndarray) -> qiskit.QuantumCircuit:
+def index_binary_correlated_walk(level: int, level_p: np.ndarray, **kwargs) -> qiskit.QuantumCircuit:
     probs = []
     probs.append([np.sqrt(level_p[0]), np.sqrt(1 - level_p[0])])
     probs.append([np.sqrt(1 - level_p[1]), np.sqrt(level_p[1])])
@@ -50,7 +49,7 @@ def index_binary_correlated_walk(level: int, level_p: np.ndarray) -> qiskit.Quan
 def benchmark_brute_force(probabilities,
               realizations,
               evaluations: Union[List[float], np.ndarray, scipy.sparse.dok_matrix],
-              func=None) -> Union[NDArray[complex], np.ndarray]:
+              func=None) -> np.ndarray:
     logging.basicConfig(format=logging.BASIC_FORMAT)
 
     output: List[complex] = []
@@ -72,7 +71,7 @@ def benchmark_monte_carlo(
         evaluations: Union[List[float], np.ndarray, scipy.sparse.dok_matrix],
         initial_value: float = 0.0,
         samples: int = 100,
-        func=None) -> Union[NDArray[complex], np.ndarray]:
+        func=None) -> np.ndarray:
     c_func_eval = monte_carlo_correlated_walk(
         probabilities=probabilities,
         realizations=realizations,
@@ -86,16 +85,16 @@ def benchmark_monte_carlo(
 
 
 class CorrelatedWalk(DiscreteStochasticProcess):
-    def __init__(self, initial_value: float, probabilities: [NDArray or np.ndarray], realizations: [NDArray or np.ndarray]):
+    def __init__(self, initial_value: float, probabilities: np.ndarray, realizations: np.ndarray):
         assert probabilities.shape == realizations.shape
         super().__init__(initial_value, probabilities, realizations)
 
-    def _proposition_one_circuit(self, scaling: Parameter, level_func=None, index_state_prep=None):
+    def _proposition_one_circuit(self, scaling: Parameter, level_func=None, index_state_prep=None, **kwargs):
         index_state_prep = index_binary_correlated_walk if index_state_prep is None else index_state_prep
-        return super(CorrelatedWalk, self)._proposition_one_circuit(scaling, level_func, index_state_prep)
+        return super(CorrelatedWalk, self)._proposition_one_circuit(scaling, level_func, index_state_prep, **kwargs)
 
     def benchmark(self, evaluations: Union[List[float], np.ndarray, scipy.sparse.dok_matrix],
-                  func=None, samples: int = 100) -> Union[NDArray[complex], np.ndarray]:
+                  func=None, samples: int = 100) -> np.ndarray:
         return benchmark_monte_carlo(
             probabilities=self.probabilities,
             realizations=self.realizations,

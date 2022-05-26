@@ -5,7 +5,8 @@ from typing import List, Union, Optional, Tuple
 
 import numpy as np
 from fbm import FBM
-from nptyping import NDArray
+
+from dc_qiskit_stochastics.simulation.asian_option import AsianOptionPricing, StateMachineDescription
 
 LOG = logging.getLogger(__name__)
 
@@ -57,7 +58,7 @@ def characteristic_function_rw_ind(initial_value: float, probabilities: np.array
     return outcomes
 
 
-def brute_force_rw_ind(probabilities: [NDArray or np.ndarray], realizations: [NDArray or np.ndarray],
+def brute_force_rw_ind(probabilities: np.ndarray, realizations: np.ndarray,
                        initial_value: float, scaling: float, func=None, **kwargs) -> Optional[float]:
     func = func if func is not None else lambda x: np.exp(1.0j * x)
     levels, k = probabilities.shape
@@ -110,7 +111,7 @@ def monte_carlo_rw_ind(mc_samples, choices, probs, length, scalings: np.ndarray,
     return None
 
 
-def brute_force_correlated_walk(probabilities: [NDArray or np.ndarray], realizations: [NDArray or np.ndarray],
+def brute_force_correlated_walk(probabilities: np.ndarray, realizations: np.ndarray,
                                 initial_value: float, scaling: float = 1.0, func=None, return_hist=False,
                                 **kwargs) -> Optional[float or Tuple[float, np.ndarray, np.ndarray]]:
 
@@ -168,7 +169,7 @@ def brute_force_correlated_walk(probabilities: [NDArray or np.ndarray], realizat
         return None
 
 
-def _monte_carlo_correlated_walk_path(probabilities: [NDArray or np.ndarray], realizations: [NDArray or np.ndarray]):
+def _monte_carlo_correlated_walk_path(probabilities: np.ndarray, realizations: np.ndarray):
     path = []
     steps = []
     for i, (p, r) in enumerate(zip(probabilities, realizations)):
@@ -253,3 +254,56 @@ def monte_carlo_fbm(hurst: float, evaluations: np.ndarray, time_evaluation: floa
             monte_carlo_eval = np.average(expected_value)
             monte_carlo.append(monte_carlo_eval)
         return monte_carlo
+
+
+def _asian_option_price(risk_free_interest, volatility, start_value, time_steps: np.ndarray):
+    from dc_qiskit_stochastics.simulation.lognormal import sample_path
+    path = sample_path(risk_free_interest, volatility, start_value, time_steps)
+    value = np.average(path)
+    return value
+
+
+def char_func_asian_option(risk_free_interest, volatility, start_value, time_steps: np.ndarray, samples: int, evaluations: np.ndarray):
+    arguments = [risk_free_interest, volatility, start_value, time_steps]
+    samples_arguments = [arguments] * samples
+
+    char_func_est_list = []
+    with Pool() as pool:
+        for v in evaluations:
+            values = pool.starmap(_asian_option_price, samples_arguments)
+            char_func_vec = np.exp(1.0j * v * np.asarray(values))
+            # char_func_vec = np.cos(v * np.asarray(values))
+            char_func_est = np.average(char_func_vec)
+            char_func_est_list.append(char_func_est)
+
+    return np.asarray(char_func_est_list)
+
+
+def char_func_asian_option_sm(evaluations: np.ndarray, asian_option_model: AsianOptionPricing):
+    data: StateMachineDescription = asian_option_model.get_state_machine_model()
+
+    evals = []
+    probs = []
+    possibilities = len(asian_option_model.time_steps) * [list(range(asian_option_model.discretization))]
+    for path in itertools.product(*possibilities):
+        prob = 1
+        val = 0
+        for l in range(len(path)):
+            c = 0 if l == 0 else path[l - 1]
+            p = data.probabilities[l][c, path[l]]
+            vl = data.realizations[l][path[l]]
+            prob *= p
+            val += vl
+        evals.append(val)
+        probs.append(prob)
+    probs = np.asarray(probs)
+    evals = np.asarray(evals)
+
+    phi_v_sim = []
+    for entry in evaluations:
+        summands = probs * np.exp(1.0j * entry * evals)
+        summed = np.sum(summands)
+        phi_v_sim.append(summed)
+    phi_v_sim = np.asarray(phi_v_sim)
+
+    return phi_v_sim

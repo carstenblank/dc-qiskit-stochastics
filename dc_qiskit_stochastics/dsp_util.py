@@ -1,5 +1,7 @@
 import bisect
 import logging
+from multiprocessing import Pool
+
 from numpy.random import random
 import sys
 from typing import List, Union, Optional, Dict, Tuple
@@ -22,6 +24,10 @@ from dc_quantum_scheduling import FinishedExperiment
 LOG = logging.getLogger(__name__)
 
 
+def _bind(qc, parameter, v):
+    return qc.bind_parameters({parameter: v})
+
+
 def create_qobj(qc_cos: QuantumCircuit, qc_sin: QuantumCircuit,
                 parameter: Parameter, evaluations: np.ndarray,
                 qobj_id: str, pass_manager: PassManager,
@@ -42,8 +48,12 @@ def create_qobj(qc_cos: QuantumCircuit, qc_sin: QuantumCircuit,
     qc_transpiled_cos_param = pass_manager.run(qc_cos)
     qc_transpiled_sin_param = pass_manager.run(qc_sin)
 
-    circuits_cos = [qc_transpiled_cos_param.bind_parameters({parameter: v}) for v in evaluations]
-    circuits_sin = [qc_transpiled_sin_param.bind_parameters({parameter: v}) for v in evaluations]
+    with Pool() as pool:
+        circuits_cos = pool.starmap(_bind, [(qc_transpiled_cos_param, parameter, v) for v in evaluations])
+        circuits_sin = pool.starmap(_bind, [(qc_transpiled_sin_param, parameter, v) for v in evaluations])
+
+    # circuits_cos = [qc_transpiled_cos_param.bind_parameters({parameter: v}) for v in evaluations]
+    # circuits_sin = [qc_transpiled_sin_param.bind_parameters({parameter: v}) for v in evaluations]
 
     config: QasmBackendConfiguration = transpiler_target_backend.configuration()
     max_shots = config.max_shots

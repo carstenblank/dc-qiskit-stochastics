@@ -8,7 +8,6 @@ from typing import List, Callable, Union, Optional, Tuple
 
 import numpy as np
 import scipy
-from nptyping import NDArray
 from qiskit.ignis.mitigation import CompleteMeasFitter
 from qiskit.providers.ibmq import IBMQBackend
 from qiskit.transpiler import PassManager
@@ -17,7 +16,7 @@ from scipy.special import gamma
 
 from .dsp_correlated_walk import CorrelatedWalk, benchmark_monte_carlo
 from .dsp_util import choice
-from simulation_scheduling import PreparedExperiment, FinishedExperiment
+from dc_quantum_scheduling import PreparedExperiment, FinishedExperiment
 
 LOG = logging.getLogger(__name__)
 
@@ -40,7 +39,7 @@ class FractionalBrownianMotion(object):
     time_evaluation: float
     initial_value: float
     walks: List[CorrelatedWalk]
-    persistence_list: [List[float] or np.ndarray or NDArray]
+    persistence_list: [List[float] or np.ndarray]
     persistence_probabilities_list: [List[float] or np.ndarray]
 
     def __init__(self, hurst_index: float, initial_value: float, approximation_N: int, approximation_M: int,
@@ -153,7 +152,7 @@ class FractionalBrownianMotion(object):
         factor = c_H / denominator
         return factor
 
-    def output_old(self, matrix: Union[NDArray, np.ndarray]):
+    def output_old(self, matrix: np.ndarray):
         assert len(matrix.shape) == 2
         # Each column is one evaluation, each row is another sampled persistence
         result: List[complex] = []
@@ -168,7 +167,7 @@ class FractionalBrownianMotion(object):
             result.append(summed_up**self.approximation_M)
         return np.asarray(result)
 
-    def output(self, matrix: Union[NDArray, np.ndarray]):
+    def output(self, matrix: np.ndarray):
         assert len(matrix.shape) == 2
         # Each column is one evaluation, each row is another sampled persistence
         result: List[complex] = []
@@ -184,7 +183,7 @@ class FractionalBrownianMotion(object):
         return np.asarray(result)
 
     def benchmark(self, evaluations: Union[List[float], np.ndarray, scipy.sparse.dok_matrix], func=None,
-                  other_arguments: Optional[dict] =None) -> Union[NDArray[complex], np.ndarray]:
+                  other_arguments: Optional[dict] =None) -> np.ndarray:
         other_arguments = {} if other_arguments is None else other_arguments
         samples = other_arguments.get('monte_carlo_samples', 100)
 

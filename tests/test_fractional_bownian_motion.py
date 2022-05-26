@@ -10,7 +10,7 @@ import pytest
 from dc_qiskit_stochastics.benchmark import monte_carlo_fbm
 from dc_qiskit_stochastics.plotting import plot_characteristic_function
 from dc_qiskit_stochastics.fractional_bownian_motion import FractionalBrownianMotion
-from simulation_scheduling import PreparedExperiment, processor
+from dc_quantum_scheduling import PreparedExperiment, processor
 from fbm import FBM
 
 logging.basicConfig(format=logging.BASIC_FORMAT, level='INFO')
@@ -23,7 +23,7 @@ def do_experiment_with_pickle(experiment: PreparedExperiment):
 
 class FractionalBrownianMotionTests(unittest.TestCase):
 
-    @pytest.skip("Not finished Test")
+    @pytest.mark.skip("Not finished Test")
     def test_benchmark(self):
         density = lambda H, p: (1 - H) * np.power(2, 3 - 2 * H) * np.power(1 - p, 1 - 2 * H)
         # density = lambda H, p: 2
