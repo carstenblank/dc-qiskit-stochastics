@@ -2,22 +2,23 @@
 
 This can be used for more elaborate set of experiments, in particular for hybrid classical-quantum approaches.
 
-# Collaboration
+# Contributing
 
-Everyone is welcome to collaborate. If you are interested in becoming a co-maintainer,
-let me (Carsten Blank) please know!
+We welcome contributions - simply fork the repository of this plugin, and then make a pull request containing your contribution. All contributers to this plugin will be listed as authors on the releases.
+
+We also encourage bug reports, suggestions for new features and enhancements!
+
+# Authors
+
+Carsten Blank
+
+# Support
+
+Source Code: https://github.com/carstenblank/dc-qiskit-stochastics
+
+Issue Tracker: https://github.com/carstenblank/dc-qiskit-stochastics/issues
+
+If you are having issues, please let us know by posting the issue on our Github issue tracker.
 
 # License
-Copyright 2018-2022 Carsten Blank
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+The dc-qiskit-stochastics is free and open source, released under the Apache License, Version 2.0.
