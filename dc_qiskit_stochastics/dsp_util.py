@@ -1,3 +1,16 @@
+# Copyright 2018-2022 Carsten Blank
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import bisect
 import logging
 from multiprocessing import Pool
@@ -10,13 +23,13 @@ import numpy as np
 import qiskit
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
-from qiskit.ignis.mitigation import CompleteMeasFitter
-from qiskit.providers import BaseBackend
+from qiskit.providers.backend import BackendV1
 from qiskit.providers.ibmq import IBMQBackend
 from qiskit.providers.models import QasmBackendConfiguration
 from qiskit.qobj import Qobj
 from qiskit.result import Result
 from qiskit.transpiler import PassManager
+from qiskit.utils.mitigation import CompleteMeasFitter
 
 from . import qobj_mapping
 from dc_quantum_scheduling import FinishedExperiment
@@ -32,7 +45,7 @@ def create_qobj(qc_cos: QuantumCircuit, qc_sin: QuantumCircuit,
                 parameter: Parameter, evaluations: np.ndarray,
                 qobj_id: str, pass_manager: PassManager,
                 other_arguments: dict,
-                transpiler_target_backend: Union[BaseBackend, IBMQBackend],
+                transpiler_target_backend: Union[BackendV1, IBMQBackend],
                 pre_pass_manager: Optional[PassManager] = None) -> List[Qobj]:
     LOG.info(f'Transpiling {len(evaluations)} cosine and {len(evaluations)} sine circuits with id={qobj_id}.')
     # We have the same number of circuits for the cosine and sine experiments
@@ -117,7 +130,7 @@ def _get_expval_proposition_one(counts: Dict[str, int]):
 
 
 def extract_evaluations(finished_experiment: FinishedExperiment, meas_fitter: Optional[CompleteMeasFitter] = None) -> np.ndarray:
-    backend: BaseBackend = finished_experiment.transpiler_backend
+    backend: BackendV1 = finished_experiment.transpiler_backend
 
     config: QasmBackendConfiguration = backend.configuration()
     max_shots = config.max_shots
