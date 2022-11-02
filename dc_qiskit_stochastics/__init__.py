@@ -15,7 +15,7 @@ import logging
 from typing import List
 
 import numpy as np
-from qiskit.providers import BaseBackend
+from qiskit.providers.backend import BackendV1
 from qiskit.providers.models import BackendConfiguration
 from qiskit.transpiler import PassManagerConfig, CouplingMap
 from qiskit.transpiler.preset_passmanagers import level_3_pass_manager, level_0_pass_manager
@@ -25,7 +25,7 @@ from qiskit.transpiler.preset_passmanagers import level_3_pass_manager, level_0_
 LOG = logging.getLogger(__name__)
 
 
-def get_default_pass_manager(transpiler_target_backend: BaseBackend, other_arguments: dict, with_pre_pm=True):
+def get_default_pass_manager(transpiler_target_backend: BackendV1, other_arguments: dict, with_pre_pm=True):
 
     # noinspection PyTypeChecker
     config = PassManagerConfig(
@@ -41,7 +41,7 @@ def get_default_pass_manager(transpiler_target_backend: BaseBackend, other_argum
     backend_config: BackendConfiguration = transpiler_target_backend.configuration()
     config.basis_gates = backend_config.basis_gates
     config.coupling_map = CouplingMap(couplinglist=backend_config.coupling_map) if backend_config.coupling_map is not None else None
-    config.backend_properties = backend_config
+    config.backend_properties = transpiler_target_backend.properties()
 
     if 'initial_layout' in other_arguments: config.initial_layout = other_arguments['initial_layout']
     if 'basis_gates' in other_arguments: config.basis_gates = other_arguments['basis_gates']

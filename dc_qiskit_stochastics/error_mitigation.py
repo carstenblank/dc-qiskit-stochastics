@@ -18,12 +18,12 @@ from typing import List, Optional
 import numpy as np
 import qiskit
 from qiskit import QuantumCircuit
-from qiskit.ignis.mitigation import complete_meas_cal, CompleteMeasFitter
 from qiskit.providers.models import QasmBackendConfiguration
 from qiskit.qobj import Qobj
 from qiskit.transpiler import PassManager
 
 from dc_quantum_scheduling import PreparedExperiment, FinishedExperiment
+from qiskit.utils.mitigation import CompleteMeasFitter, complete_meas_cal
 
 from . import qobj_mapping, get_default_pass_manager
 

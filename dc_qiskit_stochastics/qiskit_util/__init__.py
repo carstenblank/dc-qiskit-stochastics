@@ -15,8 +15,11 @@ import qiskit
 from qiskit.providers.aer.backends import aerbackend
 from qiskit.providers.ibmq import ibmqbackend
 
-from .qiskit_provider import provider
+from dc_quantum_scheduling.qiskit.qiskit_provider import provider
 
+
+def ibmqx2() -> 'ibmqbackend.IBMQBackend':
+    return provider().get_backend('ibmqx2')
 
 def ibmq_ourense() -> 'ibmqbackend.IBMQBackend':
     return provider().get_backend('ibmq_ourense')

@@ -23,13 +23,13 @@ import numpy as np
 import qiskit
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
-from qiskit.ignis.mitigation import CompleteMeasFitter
-from qiskit.providers import BaseBackend
+from qiskit.providers.backend import BackendV1
 from qiskit.providers.ibmq import IBMQBackend
 from qiskit.providers.models import QasmBackendConfiguration
 from qiskit.qobj import Qobj
 from qiskit.result import Result
 from qiskit.transpiler import PassManager
+from qiskit.utils.mitigation import CompleteMeasFitter
 
 from . import qobj_mapping
 from dc_quantum_scheduling import FinishedExperiment
@@ -45,7 +45,7 @@ def create_qobj(qc_cos: QuantumCircuit, qc_sin: QuantumCircuit,
                 parameter: Parameter, evaluations: np.ndarray,
                 qobj_id: str, pass_manager: PassManager,
                 other_arguments: dict,
-                transpiler_target_backend: Union[BaseBackend, IBMQBackend],
+                transpiler_target_backend: Union[BackendV1, IBMQBackend],
                 pre_pass_manager: Optional[PassManager] = None) -> List[Qobj]:
     LOG.info(f'Transpiling {len(evaluations)} cosine and {len(evaluations)} sine circuits with id={qobj_id}.')
     # We have the same number of circuits for the cosine and sine experiments
@@ -130,7 +130,7 @@ def _get_expval_proposition_one(counts: Dict[str, int]):
 
 
 def extract_evaluations(finished_experiment: FinishedExperiment, meas_fitter: Optional[CompleteMeasFitter] = None) -> np.ndarray:
-    backend: BaseBackend = finished_experiment.transpiler_backend
+    backend: BackendV1 = finished_experiment.transpiler_backend
 
     config: QasmBackendConfiguration = backend.configuration()
     max_shots = config.max_shots
