@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import qiskit
-from qiskit.providers.aer.backends import aerbackend
 from qiskit.providers.ibmq import ibmqbackend
 
 from dc_quantum_scheduling.qiskit.qiskit_provider import provider
+from qiskit_aer.backends.aerbackend import AerBackend
 
 
 def ibmqx2() -> 'ibmqbackend.IBMQBackend':
@@ -29,7 +29,7 @@ def ibmq_vigo() -> 'ibmqbackend.IBMQBackend':
     return provider().get_backend('ibmq_vigo')
 
 
-def qasm_simulator() -> 'aerbackend.AerBackend':
+def qasm_simulator() -> 'AerBackend':
     return qiskit.Aer.get_backend('qasm_simulator')
 
 
