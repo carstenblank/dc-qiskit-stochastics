@@ -20,7 +20,6 @@ import numpy as np
 import qiskit
 import qiskit.result
 from ddt import ddt, data as test_data, unpack
-from qiskit.providers.aer.backends.aerbackend import AerBackend
 
 import dsp_data
 import dc_qiskit_stochastics.benchmark as benchmark
@@ -34,11 +33,11 @@ LOG = logging.getLogger(__name__)
 @ddt
 class QiskitDspCircuitTests(unittest.TestCase):
     @staticmethod
-    def report_progress(job_id: str, job_status: qiskit.providers.JobStatus, job: qiskit.providers.BaseJob):
+    def report_progress(job_id: str, job_status: qiskit.providers.JobStatus, job: qiskit.providers.JobV1):
         LOG.info(f'Processing {job_id} with status {job_status}...')
 
     def assert_statevector(self, probabilities: np.ndarray, realizations: np.ndarray,
-                           scaling: float, initial_value: float,job: qiskit.providers.BaseJob,
+                           scaling: float, initial_value: float,job: qiskit.providers.JobV1,
                            measurement: Optional[str] = None):
         LOG.info(f'Asserting {job.job_id()} with status {job.status()}...')
         if job.status() == qiskit.providers.JobStatus.DONE:
