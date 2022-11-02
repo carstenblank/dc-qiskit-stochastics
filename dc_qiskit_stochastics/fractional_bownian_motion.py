@@ -21,9 +21,9 @@ from typing import List, Callable, Union, Optional, Tuple
 
 import numpy as np
 import scipy
-from qiskit.ignis.mitigation import CompleteMeasFitter
 from qiskit.providers.ibmq import IBMQBackend
 from qiskit.transpiler import PassManager
+from qiskit.utils.mitigation import CompleteMeasFitter
 from scipy import sparse
 from scipy.special import gamma
 
