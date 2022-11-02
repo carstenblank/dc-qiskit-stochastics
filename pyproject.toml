@@ -52,7 +52,7 @@ dc-qiskit-algorithms = "*"
 dc-quantum-scheduling = "*"
 hmmlearn = "*"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "*"
 matplotlib = "*"
 pandas = "*"
